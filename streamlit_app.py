@@ -39,7 +39,7 @@ st.title("ElFragmentador")
 model = PepTransformerModel.load_from_checkpoint(ef.DEFAULT_CHECKPOINT)
 model.eval()
 
-sequence = st.text_input("Peptide Sequence", value = 'MYPEPTIDEK')
+sequence = st.text_input("Peptide Sequence", value = 'MY[PHOSPHO]PEPTIDEK')
 charge = st.number_input('Charge', min_value = 1, max_value = 5, value = 3)
 nce = st.number_input('nce', min_value = 20.0, max_value = 40.0, value = 32.0, step = 0.1)
 
