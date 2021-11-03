@@ -1,3 +1,4 @@
 elfragmentador
 matplotlib
 streamlit
+cffi==1.14.6
