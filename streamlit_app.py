@@ -50,9 +50,12 @@ with torch.no_grad():
     )
 
 print(pred)
+
+sptxt_text = pred.to_sptxt()
 fig = make_spec_fig(pred)
 
 
 st.pyplot(fig)
+st.code(sptxt_text, language=None)
 
 
