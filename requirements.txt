@@ -1,4 +1,5 @@
 elfragmentador
 matplotlib
+seaborn
 streamlit
 cffi==1.14.6
