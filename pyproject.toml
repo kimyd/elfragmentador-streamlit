@@ -10,6 +10,7 @@ streamlit = "^1.12.2"
 elfragmentador = "^0.53.1"
 matplotlib = "^3.4.3"
 seaborn = "^0.11.2"
+torch = "^1.12.1"
 
 [tool.poetry.dev-dependencies]
 
