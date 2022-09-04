@@ -5,9 +5,9 @@ description = ""
 authors = ["Jspaezp <jspaezp@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.10"
-streamlit = "^1.1.0"
-elfragmentador = "^0.51.1"
+python = ">=3.10,<3.12"
+streamlit = "^1.12.2"
+elfragmentador = "^0.53.1"
 matplotlib = "^3.4.3"
 seaborn = "^0.11.2"
 
