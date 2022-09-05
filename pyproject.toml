@@ -1,16 +1,17 @@
 [tool.poetry]
 name = "elfragmentador-streamlit"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["Jspaezp <jspaezp@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
+python = ">3.9.7,<3.11"
 streamlit = "^1.12.2"
 elfragmentador = "^0.53.1"
 matplotlib = "^3.4.3"
 seaborn = "^0.11.2"
 torch = "^1.12.1"
+numba = "^0.56.2"
 
 [tool.poetry.dev-dependencies]
 
