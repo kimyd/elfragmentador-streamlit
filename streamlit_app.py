@@ -52,6 +52,12 @@ Currently the documentation lives here: [https://jspaezp.github.io/elfragmentado
 
 Please check out [The Quickstart guide](https://jspaezp.github.io/elfragmentador/quickstart) for usage instructions on your local system.
 Feel free to use this web app to check out how the model works.
+
+So far my internal metrics show that it works well for oxidized and un-modified peptides of length 5-30 (tryptic and non-tryptic).
+Spectra (not RT) work reasonably well for phosphopeptides.
+
+If you feel like it can be improved or want to let me know that it does not work in your data, feel free to open an issue in github!
+https://github.com/jspaezp/elfragmentador/issues
 """
 
 st.sidebar.markdown(page_text)
