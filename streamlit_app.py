@@ -115,11 +115,17 @@ with torch.no_grad():
 
         encoder_self_attn = []
         for i, _ in enumerate(model.main_model.encoder.encoder.layers):
-            encoder_self_attn.append(sea.get_encoder_attn(i))
+            try:
+                encoder_self_attn.append(sea.get_encoder_attn(i))
+            except IndexError:
+                print(f"Failed to get index {i} from the encoder")
 
         decoder_self_attn = []
         for i, _ in enumerate(model.main_model.decoder.trans_decoder.layers):
-            decoder_self_attn.append(sea.get_decoder_attn(i))
+            try:
+                decoder_self_attn.append(sea.get_decoder_attn(i))
+            except IndexError:
+                print(f"Failed to get index {i} from the decoder")
 
 
 print(pred)
