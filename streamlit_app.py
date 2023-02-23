@@ -105,28 +105,27 @@ Number of sequences per modification
 
 @st.cache_data
 def predict_peptide(_model, nce, sequence):
-    pred = model.predict_from_seq(sequence, nce=float(nce), as_spectrum=True)
-    return pred
+    with torch.no_grad():
+        with SEA(_model) as sea:
+            pred = _model.predict_from_seq(sequence, nce=float(nce), as_spectrum=True)
+            encoder_self_attn = []
+            for i, _ in enumerate(model.main_model.encoder.encoder.layers):
+                try:
+                    encoder_self_attn.append(sea.get_encoder_attn(i))
+                except IndexError:
+                    print(f"Failed to get index {i} from the encoder")
+
+            decoder_self_attn = []
+            for i, _ in enumerate(model.main_model.decoder.trans_decoder.layers):
+                try:
+                    decoder_self_attn.append(sea.get_decoder_attn(i))
+                except IndexError:
+                    print(f"Failed to get index {i} from the decoder")
+
+    return pred, encoder_self_attn, decoder_self_attn
 
 
-with torch.no_grad():
-    with SEA(model) as sea:
-        pred = predict_peptide(model, nce, sequence)
-
-        encoder_self_attn = []
-        for i, _ in enumerate(model.main_model.encoder.encoder.layers):
-            try:
-                encoder_self_attn.append(sea.get_encoder_attn(i))
-            except IndexError:
-                print(f"Failed to get index {i} from the encoder")
-
-        decoder_self_attn = []
-        for i, _ in enumerate(model.main_model.decoder.trans_decoder.layers):
-            try:
-                decoder_self_attn.append(sea.get_decoder_attn(i))
-            except IndexError:
-                print(f"Failed to get index {i} from the decoder")
-
+pred, encoder_self_attn, decoder_self_attn = predict_peptide(model, nce, sequence)
 
 print(pred)
 
