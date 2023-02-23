@@ -7,11 +7,13 @@ authors = ["Jspaezp <jspaezp@gmail.com>"]
 [tool.poetry.dependencies]
 python = ">3.9.7,<3.11"
 streamlit = "^1.12.2"
-elfragmentador = "^0.53.1"
 matplotlib = "^3.4.3"
 seaborn = "^0.11.2"
-torch = ">=1.12.1,<1.13.0"
+torch = "^1.13.0"
 numba = "^0.56.2"
+spectrum_utils = ">=0.4.1"
+elfragmentador = {extras = ["plotting"], version = "^0.57.0"}
+ms2ml = {extras = ["plotting"], version = "^0.0.34"}
 
 [tool.poetry.dev-dependencies]
 

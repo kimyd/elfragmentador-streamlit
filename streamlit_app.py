@@ -3,7 +3,7 @@ import os
 import torch
 import elfragmentador as ef
 from elfragmentador.model import PepTransformerModel
-from elfragmentador.visualization import SelfAttentionExplorer as SEA
+from elfragmentador.model.visualization import SelfAttentionExplorer as SEA
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -53,8 +53,8 @@ Currently the documentation lives here: [https://jspaezp.github.io/elfragmentado
 Please check out [The Quickstart guide](https://jspaezp.github.io/elfragmentador/quickstart) for usage instructions on your local system.
 Feel free to use this web app to check out how the model works.
 
-So far my internal metrics show that it works well for oxidized and un-modified peptides of length 5-30 (tryptic and non-tryptic).
-Spectra (not RT) work reasonably well for phosphopeptides.
+So far my internal metrics show that it works well for oxidized, phosphorylated, acetylated, tmt-6 and un-modified peptides of length 5-30 (tryptic and non-tryptic).
+
 
 If you feel like it can be improved or want to let me know that it does not work in your data, feel free to open an issue in github!
 https://github.com/jspaezp/elfragmentador/issues
@@ -65,29 +65,27 @@ st.sidebar.markdown(page_text)
 model = PepTransformerModel.load_from_checkpoint(ef.DEFAULT_CHECKPOINT)
 model.eval()
 
-sequence = st.sidebar.text_input("Peptide Sequence", value = 'MY[PHOSPHO]PEPTIDEK')
-charge = st.sidebar.number_input('Charge', min_value = 1, max_value = 5, value = 3)
+sequence = st.sidebar.text_input("Peptide Sequence", value = 'MY[U:21]PEPTIDEK/2')
 nce = st.sidebar.number_input('nce', min_value = 20.0, max_value = 40.0, value = 32.0, step = 0.1)
 
 
 with torch.no_grad():
     with SEA(model) as sea:
         pred = model.predict_from_seq(
-            sequence, charge=int(charge), nce=float(nce), as_spectrum=True
+            sequence, nce=float(nce), as_spectrum=True
         )
     
         encoder_self_attn = []
-        for i, _ in enumerate(model.encoder.transformer_encoder.layers):
+        for i, _ in enumerate(model.main_model.encoder.encoder.layers):
             encoder_self_attn.append(sea.get_encoder_attn(i))
 
         decoder_self_attn = []
-        for i, _ in enumerate(model.decoder.trans_decoder.layers):
+        for i, _ in enumerate(model.main_model.decoder.trans_decoder.layers):
             decoder_self_attn.append(sea.get_decoder_attn(i))
 
 
 print(pred)
 
-sptxt_text = pred.to_sptxt()
 fig = make_spec_fig(pred)
 
 
@@ -104,7 +102,5 @@ with st.expander("Decoder Self Attention Heatmaps"):
         ax.set_title(f"Decoder layer {i} Self-Attention Weights")
         st.pyplot(plt)
 
-with st.expander(".sptxt Spectrum"):
-    st.code(sptxt_text, language=None)
 
 
