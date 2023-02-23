@@ -34,10 +34,11 @@ def make_spec_fig(spectrum):
 
     return fig
 
+
 def make_heatmap_fig(attn_mat):
     fig = Figure(figsize=(10, 8))
     ax = fig.subplots()
-    sns.heatmap(attn_mat, cmap = 'viridis', ax=ax)
+    sns.heatmap(attn_mat, cmap="viridis", ax=ax)
 
     return fig, ax
 
@@ -62,19 +63,56 @@ https://github.com/jspaezp/elfragmentador/issues
 
 st.sidebar.markdown(page_text)
 
-model = PepTransformerModel.load_from_checkpoint(ef.DEFAULT_CHECKPOINT)
-model.eval()
 
-sequence = st.sidebar.text_input("Peptide Sequence", value = 'MY[U:21]PEPTIDEK/2')
-nce = st.sidebar.number_input('nce', min_value = 20.0, max_value = 40.0, value = 32.0, step = 0.1)
+@st.cache_resource
+def get_model():
+    model = PepTransformerModel.load_from_checkpoint(ef.DEFAULT_CHECKPOINT)
+    model.eval()
+    return model
+
+
+model = get_model()
+sequence = st.sidebar.text_input(
+    "Peptide Sequence",
+    value="MY[U:21]PEPTIDEK/2",
+    help=(
+        "Peptide sequence, modifications are denoted with square brackets ([U:21] is"
+        " phospho and [U:35] is oxidation), the charge is denoted with the integer"
+        " after the '/''"
+    ),
+)
+nce = st.sidebar.number_input(
+    "nce", min_value=20.0, max_value=40.0, value=32.0, step=0.1
+)
+
+st.sidebar.markdown(
+    """
+Elfragmentador has been trained on several PTMs.
+
+Number of sequences per modification
+- 78316 [OXIDATION] U:35
+- 4046 [PHOSPHO] U:21
+- 27983 [GG] U:121
+- 106394 [TMT6PLEX] U:737
+-  66 [ACETYL] U:1
+-  125 [METHYL] U:34
+-  150 [DIMETHYL] U:36
+-   53 [TRIMETHYL] U:37
+-   39 [NITRO] U:354
+"""
+)
+
+
+@st.cache_data
+def predict_peptide(_model, nce, sequence):
+    pred = model.predict_from_seq(sequence, nce=float(nce), as_spectrum=True)
+    return pred
 
 
 with torch.no_grad():
     with SEA(model) as sea:
-        pred = model.predict_from_seq(
-            sequence, nce=float(nce), as_spectrum=True
-        )
-    
+        pred = predict_peptide(model, nce, sequence)
+
         encoder_self_attn = []
         for i, _ in enumerate(model.main_model.encoder.encoder.layers):
             encoder_self_attn.append(sea.get_encoder_attn(i))
@@ -101,6 +139,3 @@ with st.expander("Decoder Self Attention Heatmaps"):
         plt, ax = make_heatmap_fig(attn)
         ax.set_title(f"Decoder layer {i} Self-Attention Weights")
         st.pyplot(plt)
-
-
-
