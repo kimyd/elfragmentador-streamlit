@@ -125,6 +125,13 @@ def predict_peptide(_model, nce, sequence):
     return pred, encoder_self_attn, decoder_self_attn
 
 
+if not st.button("OK"):
+    st.warning("Hi there! If you use this tool I could use your help!")
+    st.warning(
+        "I would really appreciate if you could email me at 'jspaezp@gmail.com' "
+        "saying that you use the tool and any information you feel confortable sharing "
+        "about how you use it!")
+
 pred, encoder_self_attn, decoder_self_attn = predict_peptide(model, nce, sequence)
 
 print(pred)
